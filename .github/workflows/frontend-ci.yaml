@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: Frontend CI Pipeline
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
 
 defaults:
   run:
-    working-directory: ./app/frontend
+    working-directory: app/frontend
 
 env:
   NODE_VERSION: '18'
