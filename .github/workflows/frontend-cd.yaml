@@ -99,5 +99,5 @@ jobs:
     - name: Install Dependencies
       run: npm ci
 
-    - name: Build with Docker
-      run: docker build --build-arg REACT_APP_MOVIE_API_URL=${{ env.REACT_APP_MOVIE_API_URL }} -t movie-frontend .
+    - name: Build with Docker and Tag with Git SHA
+      run: docker build --build-arg REACT_APP_MOVIE_API_URL=${{ env.REACT_APP_MOVIE_API_URL }} -t movie-frontend:${{ github.sha }} .
