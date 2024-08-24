@@ -1,0 +1,80 @@
+name: Backend Continuous Deployment
+
+on:
+  push:
+    branches:
+    # TODO: change this back to master
+      - master-temp 
+  workflow_dispatch:
+    inputs:
+      movie_api_url:
+        description: 'URL for the Movie API'
+        required: false
+        default: 'https://movie-picture-lazyinthegym.com'
+
+env:
+  PYTHON_VERSION: '3.x'
+
+defaults:
+  run:
+    working-directory: app/backend
+
+env:
+  NODE_VERSION: '18'
+  REACT_APP_MOVIE_API_URL: ${{ github.event.inputs.movie_api_url || 'https://movie-picture-lazyinthegym.com' }}
+  ECR_REPOSITORY: 'movie-frontend'
+  AWS_REGION: 'us-east-1'
+
+jobs:
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5.1.1
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      
+      - name: Install pipenv
+        run: pip install pipenv
+
+      - name: Install dependencies
+        run: pipenv install --dev
+
+      - name: Run lint
+        run: pipenv run lint
+
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5.1.1
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      
+      - name: Install pipenv
+        run: pip install pipenv
+
+      - name: Install dependencies
+        run: pipenv install
+
+      - name: Run tests
+        run: pipenv run test
+
+  build:
+    name: Build and Push Docker Image
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: docker build -t backend-app .
