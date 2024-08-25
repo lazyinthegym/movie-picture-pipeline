@@ -1,1 +1,5 @@
 .DS_Store
+setup/terraform/.terraform.lock.hcl
+setup/terraform/.terraform/providers/registry.terraform.io/hashicorp/aws/4.55.0/darwin_arm64/terraform-provider-aws_v4.55.0_x5
+setup/terraform/terraform.tfstate.backup
+setup/terraform/terraform.tfstate
