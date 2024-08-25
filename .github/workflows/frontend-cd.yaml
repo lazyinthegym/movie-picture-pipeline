@@ -10,7 +10,7 @@ on:
       movie_api_url:
         description: 'URL for the Movie API'
         required: false
-        default: 'https://movie-picture-lazyinthegym.com'
+        default: 'http://localhost:5000'
 
 defaults:
   run:
@@ -18,7 +18,7 @@ defaults:
 
 env:
   NODE_VERSION: '18'
-  REACT_APP_MOVIE_API_URL: ${{ github.event.inputs.movie_api_url || 'https://movie-picture-lazyinthegym.com' }}
+  REACT_APP_MOVIE_API_URL: ${{ github.event.inputs.movie_api_url || 'http://localhost:5000' }}
   ECR_REPOSITORY: 'movie-frontend'
   AWS_REGION: 'us-east-1'
 
@@ -118,3 +118,11 @@ jobs:
 
     - name: Push Docker Image to ECR
       run: docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+
+    - name: Deploy to Kubernetes
+      run: |
+        cd k8s
+        aws eks --region us-east-1 update-kubeconfig --name cluster
+        kustomize edit set image frontend=${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}
+        kustomize build | kubectl apply -f -
+        
