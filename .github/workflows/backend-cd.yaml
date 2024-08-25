@@ -65,8 +65,8 @@ jobs:
       - name: Run tests
         run: pipenv run test
 
-  build:
-    name: Build and Push Docker Image
+  build-and-deploy:
+    name: Build Docker Image, Push to ECR, and Deploy to Kubernetes
     needs: [lint, test]
     runs-on: ubuntu-latest
     steps:
@@ -88,14 +88,6 @@ jobs:
       - name: Push Docker Image to ECR
         run: docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
 
-  deploy:
-    name: Deploy to Kubernetes
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
       - name: Set up kubectl
         uses: azure/setup-kubectl@v4
         with:
@@ -107,5 +99,4 @@ jobs:
           kubectl apply -f deployment.yaml --kubeconfig=kubeconfig.yaml
           kubectl apply -f kustomization.yaml --kubeconfig=kubeconfig.yaml
           kubectl apply -f service.yaml --kubeconfig=kubeconfig.yaml
-        working-directory: app/backend/k8s
-
+        working-directory: k8s
