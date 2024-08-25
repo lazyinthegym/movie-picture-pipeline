@@ -107,5 +107,5 @@ jobs:
           kubectl apply -f deployment.yaml --kubeconfig=kubeconfig.yaml
           kubectl apply -f kustomization.yaml --kubeconfig=kubeconfig.yaml
           kubectl apply -f service.yaml --kubeconfig=kubeconfig.yaml
-        working-directory: k8s
+        working-directory: app/backend/k8s
 
