@@ -98,5 +98,5 @@ jobs:
         run: |
           cd k8s
           aws eks --region us-east-1 update-kubeconfig --name cluster
-          kustomize edit set image frontend=${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}
+          kustomize edit set image backend=${{ env.ECR_REPOSITORY }}:${{ github.sha }}
           kustomize build | kubectl apply -f -
