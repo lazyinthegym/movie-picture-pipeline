@@ -9,8 +9,8 @@ on:
     inputs:
       movie_api_url:
         description: 'URL for the Movie API'
-        required: false
-        default: 'http://localhost:5000'
+        required: true
+        default: 'http://localhost:7777'
 
 defaults:
   run:
@@ -18,7 +18,7 @@ defaults:
 
 env:
   NODE_VERSION: '18'
-  REACT_APP_MOVIE_API_URL: ${{ github.event.inputs.movie_api_url || 'http://localhost:5000' }}
+  REACT_APP_MOVIE_API_URL: ${{ github.event.inputs.movie_api_url}}
   ECR_REPOSITORY: 'movie-frontend'
   AWS_REGION: 'us-east-1'
 
