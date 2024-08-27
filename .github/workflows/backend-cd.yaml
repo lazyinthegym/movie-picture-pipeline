@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Build Docker Image
         run: docker build --build-arg REACT_APP_MOVIE_API_URL=${{ env.REACT_APP_MOVIE_API_URL }} -t ${{ env.ECR_REPOSITORY }}:${{ github.sha }} .
@@ -97,10 +97,15 @@ jobs:
         with:
           version: 'latest'
 
+      - name: Update kubeconfig for EKS
+        run: aws eks --region us-east-1 update-kubeconfig --name cluster
+
+      - name: Debug image url
+        run: |
+          echo $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+        
       - name: Deploy to Kubernetes
         run: |
           cd k8s
-          aws eks --region us-east-1 update-kubeconfig --name cluster
-          echo $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
           kustomize edit set image backend=$ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
           kustomize build | kubectl apply -f -
