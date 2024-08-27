@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'app/frontend/**'
+      - 'app/backend/**'
   workflow_dispatch:
 
 env:
