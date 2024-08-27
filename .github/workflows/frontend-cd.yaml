@@ -3,8 +3,9 @@ name: Frontend Continuous Deployment
 on:
   push:
     branches:
-      # TODO: change this back to master
-      - master-temp 
+      - master
+    paths:
+      - 'app/frontend/**' 
   workflow_dispatch:
     inputs:
       movie_api_url:
